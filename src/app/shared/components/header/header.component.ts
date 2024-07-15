@@ -1,45 +1,36 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
-  constructor(private authService:AuthService){
-    
-  }
+  constructor(private authService: AuthService, private router: Router) {}
 
   userRole: any;
 
   ngOnInit(): void {
     // Get user UUID (UID) from localStorage
 
-    
-      this.getUserRole();
-   
+    this.getUserRole();
   }
 
   getUserRole(): void {
     const userId = localStorage.getItem('userUUID');
-    if(userId){
-
-      this.authService.getUserRole(userId).subscribe(role => {
+    if (userId) {
+      this.authService.getUserRole(userId).subscribe((role) => {
         this.userRole = role;
         console.log(role);
-        
       });
     }
-
   }
-  logout(){
+  onLogout() {
+    localStorage.removeItem('userUUID');
+    localStorage.removeItem('userRole');
 
+    this.router.navigate(['/auth/login']);
   }
 }
-
-
-
-  
-
-

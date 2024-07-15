@@ -1,1 +1,50 @@
-<p>user-management works!</p>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>User Name</th>
+                <th>Role</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let user of users">
+                <td>{{ user.email }}</td>
+                <td>{{ user.userName }}</td>
+                <td>{{ user.role }}</td>
+                <td class="text-center">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-warning btn-sm mx-1 dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Edit Role To
+                        </button>
+                        <div class="dropdown-menu mx-1">
+                            <a class="dropdown-item" role="button" (click)="editUserRole(user, 'user')"
+                                *ngIf="user.role !== 'user' && roleOptions.includes('user')">User</a>
+                            <a class="dropdown-item" role="button" (click)="editUserRole(user, 'manager')"
+                                *ngIf="user.role !== 'manager' && roleOptions.includes('manager')">Manager</a>
+
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-warning btn-sm mx-1 dropdown-toggle" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false" *ngIf="user.role==='manager'">
+                        Assign Manager
+                    </button>
+                    <div class="dropdown-menu mx-1">
+                        <div *ngFor="let mUser of managableUsers">
+
+                            <a class="dropdown-item" role="button" (click)="assignManager(user, mUser.id)">{{
+                                mUser.userName }}</a>
+                        </div>
+
+
+                    </div>
+
+                    <button class="btn btn-danger btn-sm" (click)="deleteUser(user)">Delete User</button>
+                    <!-- Additional actions as needed -->
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

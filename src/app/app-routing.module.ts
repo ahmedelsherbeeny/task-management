@@ -8,18 +8,18 @@ const routes: Routes = [
   { path: '', redirectTo: '/auth/login', pathMatch: 'full' }, // Redirect to auth by default
 
   {
-    path: "",
+    path: '',
     component: LayoutComponent,
-    loadChildren: () => import('./layout/layout.module').then((m) => m.LayoutModule),
-    canActivate:[AuthGuard]
-
+    loadChildren: () =>
+      import('./layout/layout.module').then((m) => m.LayoutModule),
+    // canActivate: [AuthGuard],
   },
   {
     path: 'auth',
     loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule),
   },
- 
-  { path: '**', component:NotFoundComponent }, // Redirect unknown routes to auth
+
+  { path: '**', component: NotFoundComponent }, // Redirect unknown routes to auth
 ];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
