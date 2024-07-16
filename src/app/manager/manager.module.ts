@@ -5,18 +5,16 @@ import { ManagerRoutingModule } from './manager-routing.module';
 import { TaskManagementComponent } from './task-management/task-management.component';
 import { TaskComponent } from './task/task.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
-  declarations: [
-    TaskManagementComponent,
-    TaskComponent
-  ],
+  declarations: [TaskManagementComponent, TaskComponent],
   imports: [
     CommonModule,
     ManagerRoutingModule,
     FormsModule,
-    ReactiveFormsModule
-  ]
+    ReactiveFormsModule,
+    SharedModule,
+  ],
 })
-export class ManagerModule { }
+export class ManagerModule {}

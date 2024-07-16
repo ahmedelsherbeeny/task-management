@@ -1,4 +1,4 @@
-
+<!-- 
 
  <div class="container d-flex justify-content-center align-items-center flex-column mb-4">
     <h2 class="text-center mt-2">Task Management</h2>
@@ -38,4 +38,20 @@
 
         </div>
     </div>
+</div> -->
+
+<div class="container d-flex justify-content-center align-items-center flex-column mb-4">
+    <h2 class="text-center mt-2">Task Management</h2>
+    <button class="btn btn-primary mt-2 text-center" (click)="openCreateTaskModa()">
+        Create Task
+    </button>
+</div>
+
+
+<div class="container d-flex justify-content-center flex-wrap align-items-center gap-3 mt-2">
+    <div *ngIf="tasks.length === 0" class="alert alert-info">
+        No tasks found.
+    </div>
+    <app-task-card *ngFor="let task of tasks" [task]="task" [users]="users"
+        (emitTaskData)="editTask($event)"></app-task-card>
 </div>

@@ -24,23 +24,30 @@ export class ManagerService {
       );
   }
 
-  addUserToManager(userId: string, managerId: string): Observable<{ message: string }> {
+  getCurrentManager(managerId: string): Observable<any> {
+    return this.firestore.collection('users').doc(managerId).valueChanges();
+  }
+
+  addUserToManager(
+    userId: string,
+    managerId: string
+  ): Observable<{ message: string }> {
     return new Observable<{ message: string }>((observer) => {
       this.firestore
         .collection('users')
         .doc(managerId)
         .get()
         .subscribe({
-          next: (doc:any) => {
+          next: (doc: any) => {
             if (doc.exists) {
               const managerData = doc.data();
               const managedUsers = managerData.managedUsers || [];
-  
+
               // Add the new userId to the managedUsers array
               if (!managedUsers.includes(userId)) {
                 managedUsers.push(userId);
               }
-  
+
               // Update the manager's managedUsers array
               this.firestore
                 .collection('users')
@@ -53,7 +60,9 @@ export class ManagerService {
                   });
                 })
                 .then(() => {
-                  observer.next({ message: 'User successfully assigned to manager' });
+                  observer.next({
+                    message: 'User successfully assigned to manager',
+                  });
                   observer.complete();
                 })
                 .catch((error) => {
@@ -89,24 +98,36 @@ export class ManagerService {
   }
 
   fetchManagedUsers(managerId: string): Observable<any[]> {
-    return this.firestore.collection('users').doc(managerId).get().pipe(
-      switchMap((doc: any) => {
-        if (doc.exists) {
-          const managerData = doc.data();
-          const managedUserIds: string[] = managerData.managedUsers || [];
-          if (managedUserIds.length === 0) {
+    return this.firestore
+      .collection('users')
+      .doc(managerId)
+      .get()
+      .pipe(
+        switchMap((doc: any) => {
+          if (doc.exists) {
+            const managerData = doc.data();
+            const managedUserIds: string[] = managerData.managedUsers || [];
+            if (managedUserIds.length === 0) {
+              return of([]); // Use 'of' instead of 'from' for an empty array
+            }
+            const userObservables: Observable<any>[] = managedUserIds.map(
+              (userId: string) =>
+                this.firestore
+                  .collection('users')
+                  .doc(userId)
+                  .get()
+                  .pipe(
+                    map((userDoc: any) => ({
+                      id: userDoc.id,
+                      ...userDoc.data(),
+                    }))
+                  )
+            );
+            return combineLatest(userObservables); // Combine all the observables into one
+          } else {
             return of([]); // Use 'of' instead of 'from' for an empty array
           }
-          const userObservables: Observable<any>[] = managedUserIds.map((userId: string) =>
-            this.firestore.collection('users').doc(userId).get().pipe(
-              map((userDoc: any) => ({ id: userDoc.id, ...userDoc.data() }))
-            )
-          );
-          return combineLatest(userObservables); // Combine all the observables into one
-        } else {
-          return of([]); // Use 'of' instead of 'from' for an empty array
-        }
-      })
-    );
+        })
+      );
   }
 }

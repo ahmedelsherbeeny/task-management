@@ -6,7 +6,7 @@ import {
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router';
-import { Observable, map, take } from 'rxjs';
+import { Observable, map, of, take } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 
 @Injectable({
@@ -23,17 +23,17 @@ export class UserGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    console.log('user');
+    const userUUID = localStorage.getItem('userUUID');
+    const userRole = localStorage.getItem('userRole');
 
-    return this.authService.user$.pipe(
-      take(1),
-      map((user) => {
-        if (user && (user.role === 'user' || user.role === 'admin')) {
-          return true;
-        } else {
-          return this.router.createUrlTree(['/auth/login']);
-        }
-      })
-    );
+    if (!userUUID) {
+      return of(this.router.createUrlTree(['/auth/login']));
+    }
+
+    if (userRole === 'admin' || userRole === 'user') {
+      return of(true);
+    } else {
+      return of(this.router.createUrlTree(['/auth/login']));
+    }
   }
 }

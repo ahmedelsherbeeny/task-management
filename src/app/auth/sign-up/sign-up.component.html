@@ -1,5 +1,5 @@
 <div class="auth-page-wrapper pt-5">
-    
+
     <!-- auth page content -->
     <div class="auth-page-content">
         <div class="container">
@@ -12,8 +12,8 @@
                                 <div class="text-center mt-sm-5 mb-4 text-white-50">
                                     <div>
                                         <a href="index.html" class="d-inline-block auth-logo">
-                                            <img src="../../../assets/images/task.jpg" alt="" height="160"
-                                                width="100%" style="padding: 25px">
+                                            <img src="../../../assets/images/task.jpg" alt="" height="160" width="100%"
+                                                style="padding: 25px">
                                         </a>
                                     </div>
                                 </div>
@@ -23,7 +23,7 @@
                             <div class="p-2 mt-4">
                                 <form [formGroup]="signUpForm" (ngSubmit)="onSubmit()" autocomplete>
 
-                                   
+
                                     <div class="mb-3">
                                         <label class="form-label font-weight-bold" for="userName">Username</label>
                                         <input type="userName" class="form-control" id="userName"
@@ -36,8 +36,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label font-weight-bold" for="email">email</label>
-                                        <input type="email" class="form-control" id="email"
-                                            formControlName="email"
+                                        <input type="email" class="form-control" id="email" formControlName="email"
                                             [ngClass]="{ 'is-invalid': submitted && f['email'].errors }"
                                             placeholder="Enter email">
                                         <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
@@ -63,23 +62,24 @@
                                         </div>
                                     </div>
 
-                                    
+
                                     <div class="mt-4">
                                         <button class="btn btn-primary w-100" type="submit" [disabled]="isLoading">
-                                            
-                                            <span >Sign Up</span>
+
+                                            <span>Sign Up</span>
                                         </button>
                                     </div>
 
                                 </form>
-                                <div class="have-acc d-flex justify-content-center gap-2 align-items-center pt-2 pb-2 mb-3 mt-2 ">
+                                <div
+                                    class="have-acc d-flex justify-content-center gap-2 align-items-center pt-2 pb-2 mb-3 mt-2 ">
                                     <span>Already have an account? </span>
-                                    <a routerLink="/auth/signin" role="button" class="btn btn-primary bg-white text-dark "
-                                        style="border: 1px solid grey;">Sign
+                                    <a routerLink="/auth/login" role="button"
+                                        class="btn btn-primary bg-white text-dark " style="border: 1px solid grey;">Sign
                                         In</a>
                                 </div>
                             </div>
-                           
+
                         </div>
                         <!-- end card body -->
                     </div>
@@ -99,8 +99,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="text-center">
-                        <p class="mb-0 text-muted">&copy; Crafted with love <i
-                                class="mdi mdi-heart text-danger"></i> 
+                        <p class="mb-0 text-muted">&copy; Crafted with love <i class="mdi mdi-heart text-danger"></i>
                         </p>
                     </div>
                 </div>

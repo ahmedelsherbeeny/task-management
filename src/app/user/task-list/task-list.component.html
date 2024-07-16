@@ -1,1 +1,24 @@
-<p>task-list works!</p>
+<!-- <div class="container d-flex justify-content-center align-items-center flex-column mb-4">
+    <h2 class="text-center mt-2">My Tasks</h2>
+</div>
+
+<div class="container d-flex justify-content-center flex-wrap align-items-center gap-3 mt-2">
+    <div *ngIf="tasks.length === 0" class="alert alert-info">
+        No tasks found.
+    </div>
+    <div *ngFor="let task of tasks" class="card mb-3" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{ task.title }}</h5>
+            <p class="card-text">{{ task.description }}</p>
+            <p class="card-text">Status: {{ task.status }}</p>
+        </div>
+    </div>
+</div> -->
+
+
+<div class="container d-flex justify-content-center flex-wrap align-items-center gap-3 mt-2">
+    <div *ngIf="tasks.length === 0" class="alert alert-info">
+        No tasks found.
+    </div>
+    <app-task-card *ngFor="let task of tasks" [task]="task"></app-task-card>
+</div>
