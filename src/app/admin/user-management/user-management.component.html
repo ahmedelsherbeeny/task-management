@@ -28,7 +28,7 @@
                         </div>
                     </div>
                     <button type="button" class="btn btn-warning btn-sm mx-1 dropdown-toggle" data-bs-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false" *ngIf="user.role==='manager'">
+                        aria-haspopup="true" aria-expanded="false" *ngIf="user.role==='manager' && managableUsers.length>0">
                         Assign Manager
                     </button>
                     <div class="dropdown-menu mx-1">

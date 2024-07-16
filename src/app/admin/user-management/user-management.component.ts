@@ -36,7 +36,7 @@ export class UserManagementComponent {
     this.userService.getUsers().subscribe((users) => {
       // Filter out users with role 'admin'
       this.managableUsers = users.filter(
-        (user) => user.role !== 'admin' && user.role !== 'manager'
+        (user) => user.role !== 'admin' && user.role !== 'manager'&& user.hasManager ==false
       );
     });
   }
@@ -86,7 +86,9 @@ export class UserManagementComponent {
     } else {
       // Add this user to the new manager's managedUsers
       this.managerService.addUserToManager(userId, user.id).subscribe(
-        () => {
+        (res) => {
+          console.log(res);
+          
           // Successfully added to new manager's managedUsers
         },
         (error) => {

@@ -110,10 +110,7 @@ export class AuthService {
     });
   }
 
-  // logout() {
-  //   this.removeUserFromLocalStorage();
-  //   this.userSubject.next(null);
-  // }
+ 
 
   private checkIfEmailExists(email: string): Observable<boolean> {
     return this.firestore
