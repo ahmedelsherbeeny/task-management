@@ -21,22 +21,17 @@ export class UserManagementComponent {
 
   ngOnInit(): void {
     this.userRole = localStorage.getItem('userRole');
-    this.loadUsers();
     this.loadManagableUsers();
-  }
-
-  loadUsers() {
-    this.userService.getUsers().subscribe((users) => {
-      // Filter out users with role 'admin'
-      this.users = users.filter((user) => user.role !== 'admin');
-    });
   }
 
   loadManagableUsers() {
     this.userService.getUsers().subscribe((users) => {
       // Filter out users with role 'admin'
       this.managableUsers = users.filter(
-        (user) => user.role !== 'admin' && user.role !== 'manager'&& user.hasManager ==false
+        (user) =>
+          user.role !== 'admin' &&
+          user.role !== 'manager' &&
+          user.hasManager == false
       );
     });
   }
@@ -88,7 +83,7 @@ export class UserManagementComponent {
       this.managerService.addUserToManager(userId, user.id).subscribe(
         (res) => {
           console.log(res);
-          
+
           // Successfully added to new manager's managedUsers
         },
         (error) => {

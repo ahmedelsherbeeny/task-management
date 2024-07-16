@@ -14,6 +14,8 @@ export class TaskManagementComponent implements OnInit {
   modalRef!: NgbModalRef;
   tasks: any[] = [];
   users: any[] = [];
+  onlyUsers: any[] = [];
+  userRole!: string;
 
   constructor(
     private modalService: NgbModal,
@@ -22,30 +24,41 @@ export class TaskManagementComponent implements OnInit {
     private managerService: ManagerService
   ) {}
   ngOnInit(): void {
+    this.userRole = JSON.parse(
+      JSON.stringify(localStorage.getItem('userRole'))
+    );
+
     this.fetchTasks();
     this.fetchManagedUsers();
   }
 
   fetchTasks() {
     this.taskService.getAllTasks().subscribe((tasks) => {
-      console.log(tasks);
-
       this.tasks = tasks;
     });
   }
 
   fetchManagedUsers() {
-    const managerId = localStorage.getItem('userUUID');
-    if (managerId) {
-      this.managerService.fetchManagedUsers(managerId).subscribe({
-        next: (users: any[]) => {
-          this.users = users;
-          console.log(users);
-        },
-        error: (error) => {
-          console.error('Error fetching managed users:', error);
-        },
+    if (this.userRole === 'admin') {
+      this.userService.getUsers().subscribe((users) => {
+        // Filter out users with role 'admin'
+        this.users = users.filter((user) => user.role == 'user');
       });
+
+      return;
+    } else {
+      const managerId = localStorage.getItem('userUUID');
+      if (managerId) {
+        this.managerService.fetchManagedUsers(managerId).subscribe({
+          next: (users: any[]) => {
+            this.users = users;
+            console.log(users);
+          },
+          error: (error) => {
+            console.error('Error fetching managed users:', error);
+          },
+        });
+      }
     }
   }
 

@@ -57,4 +57,16 @@ export class TaskCardComponent implements OnInit {
       },
     });
   }
+
+  deleteTask(task: any) {
+    this.taskService.deleteTask(task.id).subscribe({
+      next: () => {
+        console.log(`Task ${task.title} deleted`);
+      },
+      error: (error) => {
+        console.error('Error deleting task:', error);
+        // Handle error as needed
+      },
+    });
+  }
 }

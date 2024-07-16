@@ -7,8 +7,8 @@
 .dropdown-menu .dropdown-submenu {
   display: none;
   position: absolute;
-  left: 100%;
-  top: -7px;
+  left: 9%;
+  top: 29px;
 }
 .dropdown-menu .dropdown-submenu-left {
   right: 100%;
@@ -16,4 +16,11 @@
 }
 .dropdown-menu > li:hover > .dropdown-submenu {
   display: block;
+}
+.rounded-pill {
+  background-color: #f3f7f7 !important;
+  border: 1px solid gray;
+  &:hover {
+    border: 1px solid gray;
+  }
 }

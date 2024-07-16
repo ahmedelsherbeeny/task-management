@@ -50,15 +50,71 @@
 
 
 
-<div class="card mb-3 d-flex flex-column justify-content-start" style="width: 18rem;">
+<div class="card mb-3 d-flex flex-column justify-content-start" style="width: 18rem; height: 18rem;">
   <div class="card-body">
-    <div>
+    <div class="d-flex justify-content-between">
+      <div class="details">
 
-      <h5 class="card-title">{{ task.title }}</h5>
-      <p class="card-text">{{ task.description }}</p>
-      <p class="card-text" *ngIf="userRole === 'manager' || userRole === 'admin'">Assigned To: {{ task.assignedTo }}</p>
-      <p class="card-text" *ngIf="userRole === 'manager' || userRole === 'admin'">Created By: {{ task.createdBy }}</p>
-      <p class="card-text">Status: {{ task.status }}</p>
+        <h5 class="card-title">{{ task.title }}</h5>
+        <p class="card-text">{{ task.description }}</p>
+        <p class="card-text" *ngIf="userRole === 'manager' || userRole === 'admin'">Assigned To: {{ task.assignedTo }}
+        </p>
+        <p class="card-text" *ngIf="userRole === 'manager' || userRole === 'admin'">Created By: {{ task.createdBy }}</p>
+        <p class="card-text">Status: {{ task.status }}</p>
+      </div>
+      <div ngbDropdown class="d-inline-block">
+        <button type="button" class="btn btn-sm  rounded-pill" id="actionDropdown" ngbDropdownToggle>
+          Actions
+          <i class="ri-more-2-fill"></i>
+        </button>
+        <div ngbDropdownMenu aria-labelledby="actionDropdown" class="dropdown-menu">
+          <button type="button" ngbDropdownItem class="btn btn-sm"
+            *ngIf="task.status !== 'Done' && (userRole === 'manager')" (click)="editTask(task)">
+            Edit
+          </button>
+
+          <li>
+            <a class="btn btn-sm dropdown-item">
+              <i class="ri-chat-forward-line align-bottom me-2 text-muted"></i>
+              Asign To &nbsp; &nbsp; &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+              <li *ngFor="let user of users">
+                <button class="btn btn-sm dropdown-item" (click)="assignTask(task, user)">
+                  {{ user.userName }}
+                </button>
+              </li>
+
+            </ul>
+          </li>
+          <li>
+            <a class="btn btn-sm dropdown-item">
+              <i class="ri-chat-forward-line align-bottom me-2 text-muted"></i>
+              Change Status To &nbsp; &nbsp; &raquo;</a>
+            <ul class="dropdown-menu dropdown-submenu">
+              <li>
+                <a class="dropdown-item" role="button" (click)="changeTaskStatus(task, 'To Do')"
+                  *ngIf="task.status !== 'To Do'">
+                  To Do
+                </a>
+                <a class="dropdown-item" role="button" (click)="changeTaskStatus(task, 'In Progress')"
+                  *ngIf="task.status !== 'In Progress'">
+                  In Progress
+                </a>
+                <a class="dropdown-item" role="button" (click)="changeTaskStatus(task, 'Done')"
+                  *ngIf="task.status !== 'Done'">
+                  Done
+                </a>
+              </li>
+
+            </ul>
+          </li>
+          <button type="button" ngbDropdownItem class="btn btn-sm btn-danger" (click)="deleteTask(task)"
+            *ngIf=" userRole === 'admin'">
+            Delete
+          </button>
+        </div>
+      </div>
+
     </div>
 
 
@@ -110,54 +166,7 @@
 
     </div> -->
 
-    <div ngbDropdown class="d-inline-block">
-      <button type="button" class="btn btn-sm btn-info waves-effect rounded-pill" id="actionDropdown" ngbDropdownToggle>
-        Actions
-        <i class="ri-more-2-fill"></i>
-      </button>
-      <div ngbDropdownMenu aria-labelledby="actionDropdown" class="dropdown-menu">
-        <button type="button" ngbDropdownItem class="btn btn-sm"
-          *ngIf="task.status !== 'Done' && (userRole === 'manager' || userRole === 'admin')" (click)="editTask(task)">
-          Edit
-        </button>
 
-        <li>
-          <a class="btn btn-sm dropdown-item">
-            <i class="ri-chat-forward-line align-bottom me-2 text-muted"></i>
-            Asign To &nbsp; &nbsp; &raquo;</a>
-          <ul class="dropdown-menu dropdown-submenu">
-            <li *ngFor="let user of users">
-              <button class="btn btn-sm dropdown-item">
-                {{ user.userName }}
-              </button>
-            </li>
-
-          </ul>
-        </li>
-        <li>
-          <a class="btn btn-sm dropdown-item">
-            <i class="ri-chat-forward-line align-bottom me-2 text-muted"></i>
-            Change Status To &nbsp; &nbsp; &raquo;</a>
-          <ul class="dropdown-menu dropdown-submenu">
-            <li>
-              <a class="dropdown-item" role="button" (click)="changeTaskStatus(task, 'To Do')"
-                *ngIf="task.status !== 'To Do'">
-                To Do
-              </a>
-              <a class="dropdown-item" role="button" (click)="changeTaskStatus(task, 'In Progress')"
-                *ngIf="task.status !== 'In Progress'">
-                In Progress
-              </a>
-              <a class="dropdown-item" role="button" (click)="changeTaskStatus(task, 'Done')"
-                *ngIf="task.status !== 'Done'">
-                Done
-              </a>
-            </li>
-
-          </ul>
-        </li>
-      </div>
-    </div>
 
 
   </div>
