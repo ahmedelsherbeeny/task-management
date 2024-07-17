@@ -16,7 +16,7 @@ export class TaskService {
         .collection('tasks')
         .add(task)
         .then(() => {
-          observer.next({ message: 'Role updated successfully' });
+          observer.next({ message: 'Task Created successfully' });
           observer.complete();
         })
         .catch((error) => {

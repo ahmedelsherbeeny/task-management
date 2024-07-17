@@ -5,6 +5,7 @@ import { User } from 'src/app/shared/models/user/user';
 import { MessageService } from 'src/app/shared/services/message.service';
 import { UserService } from 'src/app/user/user.service';
 import { SweetAlertResult } from 'sweetalert2';
+import { AdminService } from '../admin.service';
 
 @Component({
   selector: 'app-user-management',
@@ -20,6 +21,8 @@ export class UserManagementComponent {
 
   constructor(
     private userService: UserService,
+    private adminService: AdminService,
+
     private managerService: ManagerService,
     public message: MessageService // private toastr: ToastrService // Optional: Toastr for notifications
   ) {}
@@ -48,7 +51,7 @@ export class UserManagementComponent {
   }
 
   editUserRole(user: User, newRole: string) {
-    this.userService.updateUserRole(user.id!, newRole).subscribe({
+    this.adminService.updateUserRole(user.id!, newRole).subscribe({
       next: (response) => {
         this.message.toast(response.message, 'success');
       },
@@ -68,7 +71,7 @@ export class UserManagementComponent {
       )
       .then((result: SweetAlertResult) => {
         if (result.isConfirmed) {
-          this.userService.deleteUser(userId).subscribe({
+          this.adminService.deleteUser(userId).subscribe({
             next: () => {
               this.message.toast('User deleted successfully.', 'success');
 
