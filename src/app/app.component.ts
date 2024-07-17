@@ -14,13 +14,8 @@ import { AuthService } from './auth/auth.service';
 export class AppComponent implements OnInit {
   title = 'task-managment';
 
-  constructor(private fs: AngularFirestore) {}
+  constructor() {}
   ngOnInit(): void {
-    this.fs
-      .collection('tasks')
-      .valueChanges()
-      .subscribe((data) => {
-        console.log(data);
-      });
+   
   }
 }

@@ -10,7 +10,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 export class HeaderComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) {}
 
-  userRole: any;
+  userRole!: string;
 
   ngOnInit(): void {
     // Get user UUID (UID) from localStorage
@@ -22,8 +22,7 @@ export class HeaderComponent implements OnInit {
     const userId = localStorage.getItem('userUUID');
     if (userId) {
       this.authService.getUserRole(userId).subscribe((role) => {
-        this.userRole = role;
-        console.log(role);
+        this.userRole = role!;
       });
     }
   }

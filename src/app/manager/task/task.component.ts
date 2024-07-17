@@ -6,6 +6,9 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { TaskService } from 'src/app/shared/services/task.service';
 import { UserService } from 'src/app/user/user.service';
 import { ManagerService } from '../manager.service';
+import { User } from 'src/app/shared/models/user/user';
+import { Task } from 'src/app/shared/models/tasks/tasks';
+import { MessageService } from 'src/app/shared/services/message.service';
 
 @Component({
   selector: 'app-task',
@@ -17,23 +20,25 @@ export class TaskComponent {
   taskId!: string | null;
   isEditMode: boolean = false;
   users: any[] = [];
-  currentManager!: any;
+  currentManager!: User;
   @Input() taskData!: any;
+  Loader: boolean = false;
+
 
   constructor(
     private fb: FormBuilder,
     private taskService: TaskService,
     private managerService: ManagerService,
     private router: Router,
-    private route: ActivatedRoute,
     private userService: UserService,
-    public modal: NgbActiveModal
-  ) {
-    // this.taskId = this.route.snapshot.paramMap.get('id');
-    // this.isEditMode = !!this.taskId;
+    public modal: NgbActiveModal,
+    public message: MessageService
 
-    this.userService.getUsers().subscribe((users) => {
-      this.users = users.filter((user) => user.role === 'user');
+  ) {
+ 
+
+    this.userService.getUsers().subscribe((users:User[]) => {
+      this.users = users.filter((user:User) => user.role === 'user');
     });
   }
 
@@ -56,25 +61,25 @@ export class TaskComponent {
       this.managerService.getCurrentManager(managerId).subscribe({
         next: (manager: any) => {
           this.currentManager = manager;
-          console.log('Current Manager:', manager.userName);
           this.taskForm.controls['createdBy'].patchValue(
-            this.currentManager.userName
+            this.currentManager.userName!
           );
           // Perform any additional processing or binding here
         },
         error: (error) => {
-          console.error('Error fetching current manager:', error);
+          this.message.toast(error, "error");
         },
       });
     } else {
-      console.error('Manager ID not found in localStorage');
+      this.message.toast('Manager ID not found in localStorage', "error");
+
     }
   }
 
   initTaskForm() {
     this.taskForm = this.fb.group({
       assignedTo: ['Not Assigned Yet'],
-      createdBy: [''],
+      createdBy: ['',Validators.required],
       title: ['', Validators.required],
       description: ['', Validators.required],
       status: ['To Do'],
@@ -83,20 +88,36 @@ export class TaskComponent {
 
   onSubmit(): void {
     if (this.taskForm.valid) {
-      const task: any = {
+
+      this.Loader = true;
+
+      const task: Task = {
         ...this.taskForm.getRawValue(),
       };
 
       if (this.isEditMode) {
         this.taskService.updateTask(this.taskId!, task).subscribe(() => {
+          this.Loader = false
+
           this.modal.close();
+          this.message.toast("Updated Successfully", "success");
+
           this.router.navigate(['/manager/task-management']);
+        },(error)=>{
+          this.message.toast(error, "error");
+
         });
       } else {
         this.taskService.createTask(task).subscribe(() => {
+          this.Loader = false;
+
           this.modal.close();
+          this.message.toast("Created Successfully", "success");
 
           this.router.navigate(['/manager/task-management']);
+        },(error)=>{
+          this.message.toast(error, "error");
+
         });
       }
     }

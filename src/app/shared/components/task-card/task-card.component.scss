@@ -24,3 +24,26 @@
     border: 1px solid gray;
   }
 }
+
+.card{
+  overflow-y: auto;
+  overflow-x: auto;
+  background-color: #fafbfb;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adjust the values as needed */
+  border-radius: 8px; /* Optional: Add rounded corners for a more polished look */
+}
+
+.card-text{
+  color: #555151;
+    padding: 10px 0 10px 0;
+    line-height: 1.5;
+    font-size: 15px;
+    font-weight: 400;
+    margin-bottom: 0;
+
+    span{
+      font-weight: bold;
+    font-size: 14px;
+    color: #3a3636;
+    }
+}

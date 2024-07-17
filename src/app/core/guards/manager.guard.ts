@@ -13,7 +13,7 @@ import { AuthService } from 'src/app/auth/auth.service';
   providedIn: 'root',
 })
 export class ManagerGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor( private router: Router) {}
 
   canActivate(
     next: ActivatedRouteSnapshot,

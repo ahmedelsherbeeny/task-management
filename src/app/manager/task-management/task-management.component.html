@@ -1,46 +1,8 @@
-<!-- 
 
- <div class="container d-flex justify-content-center align-items-center flex-column mb-4">
-    <h2 class="text-center mt-2">Task Management</h2>
-    <button class="btn btn-primary mt-2 text-center" (click)="openCreateTaskModa()">
-        Create Task
-    </button>
-</div>
-
-<div class="container d-flex justify-content-center flex-wrap align-items-center gap-3 mt-2">
-    <div *ngIf="tasks.length === 0" class="alert alert-info">
-        No tasks found.
-    </div>
-    <div *ngFor="let task of tasks" class="card mb-3" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">{{ task.title }}</h5>
-            <p class="card-text">{{ task.description }}</p>
-            <p class="card-text">Assigned To: {{ task.assignedTo }}</p>
-            <p class="card-text">Created By: {{ task.createdBy }}</p>
-            <p class="card-text">Status: {{ task.status }}</p>
-            
-            
-
-
-            <button type="button" class="btn btn-warning btn-sm mx-1 dropdown-toggle" data-bs-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false" >
-                        Assign To
-                    </button>
-                    <div class="dropdown-menu mx-1">
-                        <div *ngFor="let user of users">
-
-                            <a class="dropdown-item" role="button" (click)="assignTask(task, user)">{{
-                                user.userName }}</a>
-                        </div>
-
-
-                    </div>
-
-        </div>
-    </div>
-</div> -->
 
 <div class="container d-flex justify-content-center align-items-center flex-column mb-4">
+    <app-loader *ngIf="Loader"></app-loader>
+
     <h2 class="text-center mt-2">Task Management</h2>
     <button class="btn btn-primary mt-2 text-center" (click)="openCreateTaskModa()" *ngIf=" userRole === 'manager'">
         Create Task

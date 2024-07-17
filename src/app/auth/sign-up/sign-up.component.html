@@ -1,6 +1,7 @@
 <div class="auth-page-wrapper pt-5">
+    <app-loader *ngIf="Loader"></app-loader>
 
-    <!-- auth page content -->
+
     <div class="auth-page-content">
         <div class="container">
             <div class="row justify-content-center">
@@ -41,6 +42,8 @@
                                             placeholder="Enter email">
                                         <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
                                             <div *ngIf="f['email'].errors['required']">email is required</div>
+                                            <div *ngIf="f['email'].errors['email']">Invalid email address</div>
+
                                         </div>
                                     </div>
 
@@ -64,7 +67,7 @@
 
 
                                     <div class="mt-4">
-                                        <button class="btn btn-primary w-100" type="submit" [disabled]="isLoading">
+                                        <button class="btn btn-primary w-100" type="submit" [disabled]="Loader">
 
                                             <span>Sign Up</span>
                                         </button>

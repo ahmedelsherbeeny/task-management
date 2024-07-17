@@ -34,7 +34,7 @@
                     <div class="dropdown-menu mx-1">
                         <div *ngFor="let mUser of managableUsers">
 
-                            <a class="dropdown-item" role="button" (click)="assignManager(user, mUser.id)">{{
+                            <a class="dropdown-item" role="button" (click)="assignManager(user, mUser.id!)">{{
                                 mUser.userName }}</a>
                         </div>
 

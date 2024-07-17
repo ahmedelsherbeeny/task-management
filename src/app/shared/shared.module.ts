@@ -5,10 +5,11 @@ import { HeaderComponent } from './components/header/header.component';
 import { RouterModule } from '@angular/router';
 import { TaskCardComponent } from './components/task-card/task-card.component';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { LoaderComponent } from './components/loader/loader.component';
 
 @NgModule({
-  declarations: [NotFoundComponent, HeaderComponent, TaskCardComponent],
+  declarations: [NotFoundComponent, HeaderComponent, TaskCardComponent, LoaderComponent],
   imports: [CommonModule, RouterModule, NgbDropdownModule],
-  exports: [HeaderComponent, TaskCardComponent],
+  exports: [HeaderComponent, TaskCardComponent,LoaderComponent],
 })
 export class SharedModule {}

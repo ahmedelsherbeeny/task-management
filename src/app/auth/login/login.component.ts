@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../auth.service';
+import { MessageService } from 'src/app/shared/services/message.service';
+import { User } from 'src/app/shared/models/user/user';
 
 @Component({
   selector: 'app-login',
@@ -10,7 +12,7 @@ import { AuthService } from '../auth.service';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
-  isLoading: boolean = false;
+  Loader: boolean = false;
 
   // Login Form
   loginForm!: FormGroup;
@@ -23,11 +25,13 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    public message: MessageService
+
   ) {}
   ngOnInit(): void {
     this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
     });
 
@@ -47,15 +51,19 @@ export class LoginComponent implements OnInit {
 
     if (!this.loginForm.valid) return;
 
-    this.isLoading = true;
+    this.Loader = true;
     let data = this.loginForm.getRawValue();
 
     this.authService.signIn(data.email, data.password).subscribe(
-      (userData) => {
+      (userData:User) => {
         if (userData) {
-          localStorage.setItem('userUUID', userData.uuid);
-          localStorage.setItem('userRole', userData.role);
-          this.isLoading = false;
+          JSON.stringify(localStorage.setItem('userUUID', userData.uuid!));
+          localStorage.setItem('userRole', userData.role!);
+          this.Loader = false;
+          
+
+          this.message.toast("Logged In Successfully", "success");
+
 
           if (userData.role === 'admin') {
             this.router.navigate(['/admin/user-management']);
@@ -66,13 +74,13 @@ export class LoginComponent implements OnInit {
           }
         } else {
           this.router.navigate(['/auth/login']);
+          this.Loader = false;
+
         }
-        console.log('User data after sign-in:', userData);
       },
       (error) => {
-        console.error('Error signing in:', error);
-        alert(error); // Alert the user with the error message
-        this.isLoading = false;
+        this.Loader = false;
+        this.message.toast(error, "error");
       }
     );
   }

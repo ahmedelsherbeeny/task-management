@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable, map } from 'rxjs';
+import { User } from '../shared/models/user/user';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +26,7 @@ export class UserService {
 
   updateUserRole(userId: string, newRole: string): Observable<any> {
     return new Observable<any>((observer) => {
-      let updateData: any = { role: newRole };
+      let updateData:User= { role: newRole };
   
       // Clear managedUsers array if changing role to 'user'
       if (newRole === 'user') {
@@ -47,7 +48,7 @@ export class UserService {
   
                 querySnapshot.forEach((doc:any) => {
                   if (doc.exists) {
-                    const managedUsers = doc.data().managedUsers || [];
+                    const managedUsers= doc.data().managedUsers || [];
                     const userIndex = managedUsers.indexOf(userId);
                     if (userIndex > -1) {
                       managedUsers.splice(userIndex, 1);

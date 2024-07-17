@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Task } from 'src/app/shared/models/tasks/tasks';
 import { TaskService } from 'src/app/shared/services/task.service';
 
 @Component({
@@ -7,7 +8,7 @@ import { TaskService } from 'src/app/shared/services/task.service';
   styleUrls: ['./task-list.component.scss'],
 })
 export class TaskListComponent implements OnInit {
-  tasks: any[] = [];
+  tasks: Task[] = [];
 
   constructor(private taskService: TaskService) {}
   ngOnInit(): void {
@@ -18,9 +19,9 @@ export class TaskListComponent implements OnInit {
     const userId = localStorage.getItem('userUUID');
     if (userId) {
       this.taskService.getUserTasks(userId).subscribe({
-        next: (tasks: any[]) => {
+        next: (tasks: Task[]) => {
+          
           this.tasks = tasks.filter((task) => task !== null);
-          console.log(this.tasks);
         },
         error: (error) => {
           console.error('Error fetching user tasks:', error);

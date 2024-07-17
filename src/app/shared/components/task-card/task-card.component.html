@@ -1,66 +1,16 @@
-<!-- <div class="card mb-3" style="width: 18rem;">
-  <div class="card-body">
-    <h5 class="card-title">{{ task.title }}</h5>
-    <p class="card-text">{{ task.description }}</p>
-    <p class="card-text">Assigned To: {{ task.assignedTo }}</p>
-    <p class="card-text">Created By: {{ task.createdBy }}</p>
-    <p class="card-text">Status: {{ task.status }}</p>
-
-    <button type="button" class="btn btn-warning btn-sm mx-1 dropdown-toggle" data-bs-toggle="dropdown"
-      aria-haspopup="true" aria-expanded="false" *ngIf="userRole =='manager' || userRole =='admin'">
-      Assign To
-    </button>
-    <div class="dropdown-menu mx-1">
-      <div *ngFor="let user of users">
-        <a class="dropdown-item" role="button" (click)="assignTask(task, user)">
-          {{ user.userName }}
-        </a>
-      </div>
-    </div>
-  </div>
-</div> -->
-
-<!-- 
-<div class="card mb-3" style="width: 18rem;">
-  <div class="card-body">
-    <h5 class="card-title">{{ task.title }}</h5>
-    <p class="card-text">{{ task.description }}</p>
-    <p class="card-text" *ngIf="userRole === 'manager' || userRole === 'admin'">Assigned To: {{ task.assignedTo }}</p>
-    <p class="card-text" *ngIf="userRole === 'manager' || userRole === 'admin'">Created By: {{ task.createdBy }}</p>
-    <p class="card-text">Status: {{ task.status }}</p>
-
-    <button type="button" class="btn btn-primary btn-sm mx-1"
-      *ngIf="task.status !== 'Done' && (userRole === 'manager' || userRole === 'admin')" (click)="editTask(task)">
-      Edit
-    </button>
-
-    <button type="button" class="btn btn-warning btn-sm mx-1 dropdown-toggle" data-bs-toggle="dropdown"
-      aria-haspopup="true" aria-expanded="false" *ngIf="userRole === 'manager' || userRole === 'admin'">
-      Assign To
-    </button>
-    <div class="dropdown-menu mx-1">
-      <div *ngFor="let user of users">
-        <a class="dropdown-item" role="button" (click)="assignTask(task, user)">
-          {{ user.userName }}
-        </a>
-      </div>
-    </div>
-  </div>
-</div> -->
 
 
-
-<div class="card mb-3 d-flex flex-column justify-content-start" style="width: 18rem; height: 18rem;">
+<div class="card mb-3 d-flex flex-column justify-content-start" style="width: 19rem; height: 20rem;">
   <div class="card-body">
     <div class="d-flex justify-content-between">
       <div class="details">
 
-        <h5 class="card-title">{{ task.title }}</h5>
-        <p class="card-text">{{ task.description }}</p>
-        <p class="card-text" *ngIf="userRole === 'manager' || userRole === 'admin'">Assigned To: {{ task.assignedTo }}
+        <h5 class="card-title pe-2">{{ task.title }}</h5>
+        <p class="card-text d-block  ">{{ task.description }}</p>
+        <p class="card-text" *ngIf="userRole === 'manager' || userRole === 'admin'"> <span>Assigned To:</span>  {{ task.assignedTo }}
         </p>
-        <p class="card-text" *ngIf="userRole === 'manager' || userRole === 'admin'">Created By: {{ task.createdBy }}</p>
-        <p class="card-text">Status: {{ task.status }}</p>
+        <p class="card-text" *ngIf="userRole === 'manager' || userRole === 'admin'"> <span>Created By:</span>  {{ task.createdBy }}</p>
+        <p class="card-text"> <span>Status:</span>  {{ task.status }}</p>
       </div>
       <div ngbDropdown class="d-inline-block">
         <button type="button" class="btn btn-sm  rounded-pill" id="actionDropdown" ngbDropdownToggle>
@@ -73,7 +23,7 @@
             Edit
           </button>
 
-          <li>
+          <li *ngIf="userRole != 'user'">
             <a class="btn btn-sm dropdown-item">
               <i class="ri-chat-forward-line align-bottom me-2 text-muted"></i>
               Asign To &nbsp; &nbsp; &raquo;</a>
@@ -116,58 +66,6 @@
       </div>
 
     </div>
-
-
-    <!-- <div class="actions d-flex justify-content-start align-items-center mt-3 ">
-
-      <div class="mb-1 " [ngClass]="{ 'me-1': userRole != 'user' }">
-        <button type="button" class="btn btn-primary btn-sm"
-          *ngIf="task.status !== 'Done' && (userRole === 'manager' || userRole === 'admin')" (click)="editTask(task)">
-          Edit
-        </button>
-      </div>
-
-      <div class="dropdown mb-1 " [ngClass]="{ 'me-1': userRole != 'user' }">
-        <button type="button" class="btn btn-warning btn-sm dropdown-toggle" data-bs-toggle="dropdown"
-          aria-haspopup="true" aria-expanded="false" *ngIf="userRole === 'manager' || userRole === 'admin'">
-          Assign To
-        </button>
-        <div class="dropdown-menu">
-          <div *ngFor="let user of users">
-            <a class="dropdown-item" role="button" (click)="assignTask(task, user)">
-              {{ user.userName }}
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="dropdown mb-1 ">
-        <button class="btn btn-info btn-sm dropdown-toggle" type="button" id="changeStatusDropdown"
-          data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Change Status
-        </button>
-        <div class="dropdown-menu" aria-labelledby="changeStatusDropdown">
-          <a class="dropdown-item" role="button" (click)="changeTaskStatus(task, 'To Do')"
-            *ngIf="task.status !== 'To Do'">
-            To Do
-          </a>
-          <a class="dropdown-item" role="button" (click)="changeTaskStatus(task, 'In Progress')"
-            *ngIf="task.status !== 'In Progress'">
-            In Progress
-          </a>
-          <a class="dropdown-item" role="button" (click)="changeTaskStatus(task, 'Done')"
-            *ngIf="task.status !== 'Done'">
-            Done
-          </a>
-        </div>
-      </div>
-
-
-
-    </div> -->
-
-
-
 
   </div>
 </div>

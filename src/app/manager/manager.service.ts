@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Observable, combineLatest, from, map, of, switchMap } from 'rxjs';
 import firebase from 'firebase/compat/app'; // Import firebase
+import { User } from '../shared/models/user/user';
 
 @Injectable({
   providedIn: 'root',
@@ -9,14 +10,14 @@ import firebase from 'firebase/compat/app'; // Import firebase
 export class ManagerService {
   constructor(private firestore: AngularFirestore) {}
 
-  getManagers(): Observable<any[]> {
+  getManagers(): Observable<User[]> {
     return this.firestore
       .collection('users', (ref) => ref.where('role', '==', 'manager'))
       .snapshotChanges()
       .pipe(
         map((actions) =>
           actions.map((a) => {
-            const data = a.payload.doc.data() as any;
+            const data = a.payload.doc.data() as User;
             const id = a.payload.doc.id;
             return { id, ...data };
           })
@@ -38,9 +39,9 @@ export class ManagerService {
         .doc(managerId)
         .get()
         .subscribe({
-          next: (doc: any) => {
+          next: (doc) => {
             if (doc.exists) {
-              const managerData = doc.data();
+              const managerData:User = doc.data()!;
               const managedUsers = managerData.managedUsers || [];
 
               // Add the new userId to the managedUsers array
@@ -97,29 +98,29 @@ export class ManagerService {
     });
   }
 
-  fetchManagedUsers(managerId: string): Observable<any[]> {
+  fetchManagedUsers(managerId: string): Observable<User[]> {
     return this.firestore
       .collection('users')
       .doc(managerId)
       .get()
       .pipe(
-        switchMap((doc: any) => {
+        switchMap((doc) => {
           if (doc.exists) {
-            const managerData = doc.data();
-            const managedUserIds: string[] = managerData.managedUsers || [];
+            const managerData:User = doc.data()!;
+            const managedUserIds: string[] = managerData.managedUsers || []!;
             if (managedUserIds.length === 0) {
               return of([]); // Use 'of' instead of 'from' for an empty array
             }
-            const userObservables: Observable<any>[] = managedUserIds.map(
+            const userObservables: Observable<User>[] = managedUserIds.map(
               (userId: string) =>
                 this.firestore
                   .collection('users')
                   .doc(userId)
                   .get()
                   .pipe(
-                    map((userDoc: any) => ({
+                    map((userDoc) => ({
                       id: userDoc.id,
-                      ...userDoc.data(),
+                      ...userDoc.data()!,
                     }))
                   )
             );

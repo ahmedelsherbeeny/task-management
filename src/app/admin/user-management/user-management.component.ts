@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
 import { ManagerService } from 'src/app/manager/manager.service';
+import { User } from 'src/app/shared/models/user/user';
 import { UserService } from 'src/app/user/user.service';
 
 @Component({
@@ -9,10 +10,10 @@ import { UserService } from 'src/app/user/user.service';
   styleUrls: ['./user-management.component.scss'],
 })
 export class UserManagementComponent {
-  users: any[] = [];
+  users: User[] = [];
   userRole: string | null = null; // Current user role
   roleOptions: string[] = ['user', 'manager']; // Role options for editing
-  managableUsers: any[] = [];
+  managableUsers: User[] = [];
 
   constructor(
     private userService: UserService,
@@ -21,14 +22,26 @@ export class UserManagementComponent {
 
   ngOnInit(): void {
     this.userRole = localStorage.getItem('userRole');
+    this.getUsersAndManager()
     this.loadManagableUsers();
+
+  }
+
+  getUsersAndManager(){
+    this.userService.getUsers().subscribe(us=>{
+      this.users = us.filter(
+        (user) =>
+          user.role !== 'admin'
+      );
+
+    })
   }
 
   loadManagableUsers() {
-    this.userService.getUsers().subscribe((users) => {
+    this.userService.getUsers().subscribe((users:User[]) => {
       // Filter out users with role 'admin'
       this.managableUsers = users.filter(
-        (user) =>
+        (user:User) =>
           user.role !== 'admin' &&
           user.role !== 'manager' &&
           user.hasManager == false
@@ -36,8 +49,8 @@ export class UserManagementComponent {
     });
   }
 
-  editUserRole(user: any, newRole: string) {
-    this.userService.updateUserRole(user.id, newRole).subscribe({
+  editUserRole(user: User, newRole: string) {
+    this.userService.updateUserRole(user.id!, newRole).subscribe({
       next: (response) => {
         console.log(response.message); // Handle success message
       },
@@ -47,7 +60,7 @@ export class UserManagementComponent {
     });
   }
 
-  deleteUser(user: any) {
+  deleteUser(user: User) {
     // Example method to delete user (for admins)
     // Implement logic to confirm deletion and delete user from Firestore
     // console.log('Deleting user:', user);
@@ -59,7 +72,7 @@ export class UserManagementComponent {
     // });
   }
 
-  assignManager(user: any, userId: string | null) {
+  assignManager(user: User, userId: string | null) {
     console.log(user, userId);
 
     // Get the current managedUsers array of the selected manager
@@ -69,7 +82,7 @@ export class UserManagementComponent {
     if (userId === null) {
       // Remove this user from any existing manager's managedUsers
       currentManagedUsers.forEach((userId: string) => {
-        this.managerService.removeManagerFromUser(userId, user.id).subscribe(
+        this.managerService.removeManagerFromUser(userId, user.id!).subscribe(
           () => {
             // Successfully removed from existing manager's managedUsers
           },
@@ -80,7 +93,7 @@ export class UserManagementComponent {
       });
     } else {
       // Add this user to the new manager's managedUsers
-      this.managerService.addUserToManager(userId, user.id).subscribe(
+      this.managerService.addUserToManager(userId, user.id!).subscribe(
         (res) => {
           console.log(res);
 

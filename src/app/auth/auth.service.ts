@@ -8,6 +8,7 @@ import {
   Observable,
   switchMap,
 } from 'rxjs';
+import { User } from '../shared/models/user/user';
 
 @Injectable({
   providedIn: 'root',
@@ -51,7 +52,7 @@ export class AuthService {
               return from(this.firestore.collection('users').add(userData));
             }
           }),
-          switchMap((docRef: any) => {
+          switchMap((docRef: User) => {
             const uuid = docRef.id;
             return this.getDocumentData(docRef).pipe(
               map((userData) => ({ uuid, ...userData }))
@@ -84,7 +85,9 @@ export class AuthService {
           map((snapshot) => {
             if (!snapshot.empty) {
               const doc = snapshot.docs[0];
-              const userData: any = doc.data();
+              const userData: User = doc.data()!;
+              console.log(doc.data());
+              
               const uuid = doc.id;
 
               this.userSubject.next({ uuid, ...userData });
