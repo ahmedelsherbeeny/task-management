@@ -9,26 +9,27 @@
 ## Roles and Responsibilities
  1. Admin:
 
- .Responsibilities:
-   .Manages users and their roles and can delete them.
-   .Assign users to managers.
-   .Assigns tasks to users.
-   .Can delete any task.
-   .Can change task status.
+ - Responsibilities:
+   - Manages users and their roles and can delete them.
+   - Assign users to managers.
+   - Assigns tasks to users.
+   - Can delete any task.
+   - Can change task status.
 
  2. Manager:
 
- .Responsibilities:
-   .Manages tasks assigned to their team members.
-   .Can assign tasks to his supervised users.
-   .Monitors and updates task statuses and can update the task unless its status is done.
+ - Responsibilities:
+   - Manages tasks assigned to their team members.
+   - Can assign tasks to his supervised users.
+   - Monitors and updates task statuses and can update the task unless its status is done.
 
 
 3. User:
 
- .Responsibilities:
-   .Receives tasks assigned by Managers or Admins.
-   .Updates task progress and status.
+ - Responsibilities:
+
+   - Receives tasks assigned by Managers or Admins.
+   - Updates task progress and status.
 
    
 ## Features
