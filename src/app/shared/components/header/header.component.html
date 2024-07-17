@@ -9,20 +9,16 @@
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <!-- Manage Tasks and Manage Users are already handled -->
-        <li class="nav-item">
+        <li class="nav-item" routerLinkActive="active">
           <a class="nav-link" *ngIf="userRole === 'admin'" routerLink="/manager/task-management">Manage Tasks</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" routerLinkActive="active">
           <a class="nav-link" *ngIf="userRole === 'admin'" routerLink="/admin/user-management">Manage Users</a>
         </li>
       </ul>
       <ul class="navbar-nav ms-auto">
-        <!-- <li class="nav-item">
-          <a class="nav-link" *ngIf="userRole === 'user'" routerLink="/user/task-list">
-            <i class="fa fa-tasks"></i> My Tasks
-          </a>
-        </li> -->
-        <li class="nav-item">
+        
+        <li class="nav-item" routerLinkActive="active">
           <a class="nav-link" (click)="onLogout()">Logout</a>
         </li>
       </ul>
