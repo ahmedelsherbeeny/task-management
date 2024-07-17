@@ -8,8 +8,18 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { LoaderComponent } from './components/loader/loader.component';
 
 @NgModule({
-  declarations: [NotFoundComponent, HeaderComponent, TaskCardComponent, LoaderComponent],
+  declarations: [
+    NotFoundComponent,
+    HeaderComponent,
+    TaskCardComponent,
+    LoaderComponent,
+  ],
   imports: [CommonModule, RouterModule, NgbDropdownModule],
-  exports: [HeaderComponent, TaskCardComponent,LoaderComponent],
+  exports: [
+    HeaderComponent,
+    TaskCardComponent,
+    LoaderComponent,
+    NgbDropdownModule,
+  ],
 })
 export class SharedModule {}

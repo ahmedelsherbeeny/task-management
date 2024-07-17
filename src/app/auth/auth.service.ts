@@ -17,29 +17,15 @@ export class AuthService {
   private userSubject = new BehaviorSubject<any>(null);
   user$ = this.userSubject.asObservable();
 
-  constructor(private firestore: AngularFirestore) {
-    // this.loadUserFromLocalStorage();
-  }
-
-  // loadUserFromLocalStorage() {
-  //   const userUUID = localStorage.getItem('userUUID');
-  //   if (userUUID) {
-  //     this.firestore
-  //       .collection('users')
-  //       .doc(userUUID)
-  //       .valueChanges()
-  //       .subscribe(
-  //         (user) => this.userSubject.next(user),
-  //         (error) => console.error('Error loading user:', error)
-  //       );
-  //   }
-  // }
+  constructor(private firestore: AngularFirestore) {}
 
   signUp(data: any): Observable<any> {
     const userData = {
       ...data,
       role: 'user',
       managedUsers: [],
+      hasManager: false,
+      tasks: [],
     };
 
     return new Observable<any>((observer) => {
@@ -87,7 +73,7 @@ export class AuthService {
               const doc = snapshot.docs[0];
               const userData: User = doc.data()!;
               console.log(doc.data());
-              
+
               const uuid = doc.id;
 
               this.userSubject.next({ uuid, ...userData });
@@ -112,8 +98,6 @@ export class AuthService {
         );
     });
   }
-
- 
 
   private checkIfEmailExists(email: string): Observable<boolean> {
     return this.firestore
@@ -145,7 +129,13 @@ export class AuthService {
       .collection('users')
       .doc(uid)
       .valueChanges()
-      .pipe(map((user: any) => user.role));
+      .pipe(
+        map((user: any) => {
+          if (user) {
+            return user.role;
+          }
+        })
+      );
   }
 
   isAuthenticated(): Observable<boolean> {

@@ -2,48 +2,73 @@
     <table class="table table-striped">
         <thead>
             <tr>
+                <th class="text-center">Actions</th>
                 <th>Email</th>
                 <th>User Name</th>
                 <th>Role</th>
-                <th class="text-center">Actions</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let user of users">
+                <td class="text-center">
+
+                    <div ngbDropdown class="d-inline-block">
+                        <button type="button" class="btn btn-sm  rounded-pill" id="actionDropdown" ngbDropdownToggle>
+                            Actions
+                            <i class="ri-more-2-fill"></i>
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="actionDropdown" class="dropdown-menu">
+
+
+
+                            <li>
+                                <a class="btn btn-sm dropdown-item">
+                                    <i class="ri-chat-forward-line align-bottom me-2 text-muted"></i>
+                                    Edit Role To &nbsp; &nbsp; &raquo;</a>
+                                <ul class="dropdown-menu dropdown-submenu">
+                                    <li>
+                                        <button class="btn btn-sm dropdown-item"
+                                            *ngIf="user.role !== 'user' && roleOptions.includes('user')"
+                                            (click)="editUserRole(user, 'user')">
+                                            User
+                                        </button>
+                                    </li>
+
+                                    <li>
+                                        <button class="btn btn-sm dropdown-item"
+                                            *ngIf="user.role !== 'manager' && roleOptions.includes('manager')"
+                                            (click)="editUserRole(user, 'manager')">
+                                            Manager
+                                        </button>
+                                    </li>
+
+                                </ul>
+                            </li>
+                            <li *ngIf="user.role==='manager' && managableUsers.length>0">
+                                <a class="btn btn-sm dropdown-item">
+                                    <i class="ri-chat-forward-line align-bottom me-2 text-muted"></i>
+                                    Assign Manager To &nbsp; &nbsp; &raquo;</a>
+                                <ul class="dropdown-menu dropdown-submenu">
+                                    <li *ngFor="let mUser of managableUsers">
+                                        <a class="dropdown-item" role="button" (click)="assignManager(user, mUser.id!)">
+                                            {{mUser.userName}}
+                                        </a>
+
+                                    </li>
+
+                                </ul>
+                            </li>
+                            <a role="button" ngbDropdownItem class="btn btn-sm dropdown-item"
+                                (click)="deleteUser(user.id!)">
+                                <i class="ri-chat-forward-line align-bottom me-2 text-muted"></i>
+                                Delete
+                            </a>
+                        </div>
+                    </div>
+                </td>
                 <td>{{ user.email }}</td>
                 <td>{{ user.userName }}</td>
                 <td>{{ user.role }}</td>
-                <td class="text-center">
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-warning btn-sm mx-1 dropdown-toggle"
-                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Edit Role To
-                        </button>
-                        <div class="dropdown-menu mx-1">
-                            <a class="dropdown-item" role="button" (click)="editUserRole(user, 'user')"
-                                *ngIf="user.role !== 'user' && roleOptions.includes('user')">User</a>
-                            <a class="dropdown-item" role="button" (click)="editUserRole(user, 'manager')"
-                                *ngIf="user.role !== 'manager' && roleOptions.includes('manager')">Manager</a>
-
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-warning btn-sm mx-1 dropdown-toggle" data-bs-toggle="dropdown"
-                        aria-haspopup="true" aria-expanded="false" *ngIf="user.role==='manager' && managableUsers.length>0">
-                        Assign Manager
-                    </button>
-                    <div class="dropdown-menu mx-1">
-                        <div *ngFor="let mUser of managableUsers">
-
-                            <a class="dropdown-item" role="button" (click)="assignManager(user, mUser.id!)">{{
-                                mUser.userName }}</a>
-                        </div>
-
-
-                    </div>
-
-                    <button class="btn btn-danger btn-sm" (click)="deleteUser(user)">Delete User</button>
-                    <!-- Additional actions as needed -->
-                </td>
             </tr>
         </tbody>
     </table>

@@ -1,5 +1,3 @@
-
-
 <div class="card mb-3 d-flex flex-column justify-content-start" style="width: 19rem; height: 20rem;">
   <div class="card-body">
     <div class="d-flex justify-content-between">
@@ -7,10 +5,12 @@
 
         <h5 class="card-title pe-2">{{ task.title }}</h5>
         <p class="card-text d-block  ">{{ task.description }}</p>
-        <p class="card-text" *ngIf="userRole === 'manager' || userRole === 'admin'"> <span>Assigned To:</span>  {{ task.assignedTo }}
+        <p class="card-text" *ngIf="userRole === 'manager' || userRole === 'admin'"> <span>Assigned To:</span> {{
+          task.assignedTo }}
         </p>
-        <p class="card-text" *ngIf="userRole === 'manager' || userRole === 'admin'"> <span>Created By:</span>  {{ task.createdBy }}</p>
-        <p class="card-text"> <span>Status:</span>  {{ task.status }}</p>
+        <p class="card-text" *ngIf="userRole === 'manager' || userRole === 'admin'"> <span>Created By:</span> {{
+          task.createdBy }}</p>
+        <p class="card-text"> <span>Status:</span> {{ task.status }}</p>
       </div>
       <div ngbDropdown class="d-inline-block">
         <button type="button" class="btn btn-sm  rounded-pill" id="actionDropdown" ngbDropdownToggle>
@@ -18,10 +18,16 @@
           <i class="ri-more-2-fill"></i>
         </button>
         <div ngbDropdownMenu aria-labelledby="actionDropdown" class="dropdown-menu">
-          <button type="button" ngbDropdownItem class="btn btn-sm"
-            *ngIf="task.status !== 'Done' && (userRole === 'manager')" (click)="editTask(task)">
-            Edit
-          </button>
+
+          <li>
+
+            <a type="button" ngbDropdownItem class="btn btn-sm dropdown-item"
+              *ngIf="task.status !== 'Done' && (userRole === 'manager')" (click)="editTask(task)">
+              <i class="ri-chat-forward-line align-bottom me-2 text-muted"></i>
+              Edit
+
+            </a>
+          </li>
 
           <li *ngIf="userRole != 'user'">
             <a class="btn btn-sm dropdown-item">
@@ -58,10 +64,15 @@
 
             </ul>
           </li>
-          <button type="button" ngbDropdownItem class="btn btn-sm btn-danger" (click)="deleteTask(task)"
-            *ngIf=" userRole === 'admin'">
-            Delete
-          </button>
+          <li>
+
+            <a role="button" ngbDropdownItem class="btn btn-sm dropdown-item" (click)="deleteTask(task)"
+              *ngIf=" userRole === 'admin'">
+              <i class="ri-chat-forward-line align-bottom me-2 text-muted"></i>
+              Delete
+
+            </a>
+          </li>
         </div>
       </div>
 

@@ -25,7 +25,7 @@
   }
 }
 
-.card{
+.card {
   overflow-y: auto;
   overflow-x: auto;
   background-color: #fafbfb;
@@ -33,17 +33,17 @@
   border-radius: 8px; /* Optional: Add rounded corners for a more polished look */
 }
 
-.card-text{
+.card-text {
   color: #555151;
-    padding: 10px 0 10px 0;
-    line-height: 1.5;
-    font-size: 15px;
-    font-weight: 400;
-    margin-bottom: 0;
+  padding: 10px 0 10px 0;
+  line-height: 1.5;
+  font-size: 15px;
+  font-weight: 400;
+  margin-bottom: 0;
 
-    span{
-      font-weight: bold;
+  span {
+    font-weight: bold;
     font-size: 14px;
     color: #3a3636;
-    }
+  }
 }

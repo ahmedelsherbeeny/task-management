@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { TaskComponent } from '../task/task.component';
 import { TaskService } from 'src/app/shared/services/task.service';
@@ -21,14 +21,12 @@ export class TaskManagementComponent implements OnInit {
   userRole!: string;
   Loader: boolean = false;
 
-
   constructor(
     private modalService: NgbModal,
     private taskService: TaskService,
     private userService: UserService,
     private managerService: ManagerService,
     public message: MessageService
-
   ) {}
   ngOnInit(): void {
     this.userRole = JSON.parse(
@@ -40,22 +38,24 @@ export class TaskManagementComponent implements OnInit {
   }
 
   fetchTasks() {
-    this.Loader=true
-    this.taskService.getAllTasks().subscribe((tasks:Task[]) => {
-      this.tasks = tasks;
-      this.Loader=false
-    },(error)=>{
-      this.Loader=false
+    this.Loader = true;
+    this.taskService.getAllTasks().subscribe(
+      (tasks: Task[]) => {
+        this.tasks = tasks;
+        this.Loader = false;
+      },
+      (error) => {
+        this.Loader = false;
 
-      this.message.toast(error, "error");
-
-    });
+        this.message.toast(error, 'error');
+      }
+    );
   }
 
   fetchManagedUsers() {
     if (this.userRole === 'admin') {
-      this.userService.getUsers().subscribe((users:User[]) => {
-        this.users = users.filter((user:User) => user.role == 'user');
+      this.userService.getUsers().subscribe((users: User[]) => {
+        this.users = users.filter((user: User) => user.role == 'user');
       });
 
       return;
@@ -73,8 +73,6 @@ export class TaskManagementComponent implements OnInit {
       }
     }
   }
-
-
 
   openCreateTaskModa() {
     this.modalRef = this.modalService.open(TaskComponent, {

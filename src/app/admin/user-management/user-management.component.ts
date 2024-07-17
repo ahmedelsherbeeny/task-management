@@ -1,13 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { AuthService } from 'src/app/auth/auth.service';
 import { ManagerService } from 'src/app/manager/manager.service';
 import { User } from 'src/app/shared/models/user/user';
+import { MessageService } from 'src/app/shared/services/message.service';
 import { UserService } from 'src/app/user/user.service';
+import { SweetAlertResult } from 'sweetalert2';
 
 @Component({
   selector: 'app-user-management',
   templateUrl: './user-management.component.html',
   styleUrls: ['./user-management.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class UserManagementComponent {
   users: User[] = [];
@@ -17,31 +20,26 @@ export class UserManagementComponent {
 
   constructor(
     private userService: UserService,
-    private managerService: ManagerService // private toastr: ToastrService // Optional: Toastr for notifications
+    private managerService: ManagerService,
+    public message: MessageService // private toastr: ToastrService // Optional: Toastr for notifications
   ) {}
 
   ngOnInit(): void {
     this.userRole = localStorage.getItem('userRole');
-    this.getUsersAndManager()
+    this.getUsersAndManager();
     this.loadManagableUsers();
-
   }
 
-  getUsersAndManager(){
-    this.userService.getUsers().subscribe(us=>{
-      this.users = us.filter(
-        (user) =>
-          user.role !== 'admin'
-      );
-
-    })
+  getUsersAndManager() {
+    this.userService.getUsers().subscribe((us) => {
+      this.users = us.filter((user) => user.role !== 'admin');
+    });
   }
 
   loadManagableUsers() {
-    this.userService.getUsers().subscribe((users:User[]) => {
-      // Filter out users with role 'admin'
+    this.userService.getUsers().subscribe((users: User[]) => {
       this.managableUsers = users.filter(
-        (user:User) =>
+        (user: User) =>
           user.role !== 'admin' &&
           user.role !== 'manager' &&
           user.hasManager == false
@@ -52,29 +50,43 @@ export class UserManagementComponent {
   editUserRole(user: User, newRole: string) {
     this.userService.updateUserRole(user.id!, newRole).subscribe({
       next: (response) => {
-        console.log(response.message); // Handle success message
+        this.message.toast(response.message, 'success');
       },
       error: (error) => {
-        console.error('Error updating role:', error); // Handle error
+        this.message.toast(error, 'error');
       },
     });
   }
 
-  deleteUser(user: User) {
-    // Example method to delete user (for admins)
-    // Implement logic to confirm deletion and delete user from Firestore
-    // console.log('Deleting user:', user);
-    // // Optional: Show confirmation dialog and handle deletion
-    // this.userService.deleteUser(user.id).subscribe(() => {
-    //   this.toastr.success(`${user.userName} deleted successfully`);
-    //   // Reload users after deletion
-    //   this.loadUsers();
-    // });
+  deleteUser(userId: string) {
+    this.message
+      .confirm(
+        'Delete!',
+        'Are you sure you want to delete it?',
+        'primary',
+        'question'
+      )
+      .then((result: SweetAlertResult) => {
+        if (result.isConfirmed) {
+          this.userService.deleteUser(userId).subscribe({
+            next: () => {
+              this.message.toast('User deleted successfully.', 'success');
+
+              // Optionally, you can refresh the user list or perform any necessary actions.
+            },
+            error: (error) => {
+              this.message.toast(error, 'error');
+
+              // Handle error as needed, such as displaying an error message.
+            },
+          });
+        } else {
+          return;
+        }
+      });
   }
 
   assignManager(user: User, userId: string | null) {
-    console.log(user, userId);
-
     // Get the current managedUsers array of the selected manager
     const currentManagedUsers = user.managedUsers || [];
 
@@ -85,9 +97,10 @@ export class UserManagementComponent {
         this.managerService.removeManagerFromUser(userId, user.id!).subscribe(
           () => {
             // Successfully removed from existing manager's managedUsers
+            this.message.toast('User removed Succesfully', 'success');
           },
           (error) => {
-            console.error('Error removing user from manager:', error);
+            this.message.toast(error, 'error');
           }
         );
       });
@@ -96,11 +109,12 @@ export class UserManagementComponent {
       this.managerService.addUserToManager(userId, user.id!).subscribe(
         (res) => {
           console.log(res);
+          this.message.toast('User Assigned Succesfully', 'success');
 
           // Successfully added to new manager's managedUsers
         },
         (error) => {
-          console.error('Error adding user to manager:', error);
+          this.message.toast(error, 'error');
         }
       );
     }
