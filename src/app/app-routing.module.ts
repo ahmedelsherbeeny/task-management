@@ -4,7 +4,7 @@ import { LayoutComponent } from './layout/layout/layout.component';
 import { NotFoundComponent } from './shared/components/not-found/not-found.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/auth', pathMatch: 'full' }, // Redirect to auth by default
+  { path: '', redirectTo: '/auth/login', pathMatch: 'full' }, // Redirect to auth by default
 
   {
     path: '',
