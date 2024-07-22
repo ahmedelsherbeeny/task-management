@@ -1,0 +1,27 @@
+/* not-found.component.css */
+.not-found-container {
+  text-align: center;
+  padding: 50px;
+  background-color: #f9f9f9;
+}
+
+.not-found-title {
+  font-size: 100px;
+  color: #ff6f61;
+  margin: 0;
+}
+
+.not-found-message {
+  font-size: 20px;
+  color: #333;
+}
+
+.not-found-link {
+  font-size: 18px;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.not-found-link:hover {
+  text-decoration: underline;
+}

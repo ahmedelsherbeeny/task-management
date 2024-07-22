@@ -74,13 +74,12 @@ export class TaskService {
         .then((querySnapshot: any) => {
           const batch = this.firestore.firestore.batch();
           querySnapshot.forEach((doc: any) => {
-            const userData:any = doc.data();
+            const userData: any = doc.data();
             const updatedTasks = (userData.tasks || []).filter(
               (task: any) => task.taskId !== taskId
             );
             // Update the user's tasks array if it contains the task
-            if(userData.tasks){
-
+            if (userData.tasks) {
               if (updatedTasks.length !== userData.tasks.length) {
                 batch.update(doc.ref, { tasks: updatedTasks });
               }
@@ -111,7 +110,7 @@ export class TaskService {
       .pipe(
         switchMap((userDoc: any) => {
           if (userDoc.exists) {
-            const userData:any = userDoc.data();
+            const userData: any = userDoc.data();
             const taskIds = userData.tasks.map((task: Task) => task.taskId!)!;
             if (taskIds.length === 0) {
               return from([[]]);
@@ -125,7 +124,7 @@ export class TaskService {
                   map((taskDoc) => {
                     if (taskDoc.exists) {
                       console.log(taskDoc.data());
-                      
+
                       return { id: taskDoc.id, ...taskDoc.data()! };
                     }
                     return null;
@@ -155,8 +154,6 @@ export class TaskService {
       );
   }
 
-  
-
   assignTask(
     taskId: string,
     newUserId: string,
@@ -177,20 +174,21 @@ export class TaskService {
             .subscribe({
               next: (doc) => {
                 if (doc.exists) {
-                  const userData:User = doc.data()!;
+                  const userData: User = doc.data()!;
                   let tasks = userData.tasks || [];
 
                   if (add) {
                     // Check if the task is already assigned to the user
                     if (tasks.find((task: Task) => task.taskId === taskId)) {
-
                       subObserver.error('Task already assigned to the user');
                       return;
                     }
                     tasks.push({ taskId, taskTitle: '' }); // Adjust taskTitle as needed
                   } else {
                     // Remove the task from the user's tasks array
-                    tasks = tasks.filter((task: Task) => task.taskId !== taskId);
+                    tasks = tasks.filter(
+                      (task: Task) => task.taskId !== taskId
+                    );
                   }
 
                   // Update the user's tasks array in Firestore
