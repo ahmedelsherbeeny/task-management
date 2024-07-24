@@ -72,7 +72,6 @@ export class AuthService {
             if (!snapshot.empty) {
               const doc = snapshot.docs[0];
               const userData: User = doc.data()!;
-              console.log(doc.data());
 
               const uuid = doc.id;
 

@@ -123,7 +123,6 @@ export class TaskService {
                 .pipe(
                   map((taskDoc) => {
                     if (taskDoc.exists) {
-                      console.log(taskDoc.data());
 
                       return { id: taskDoc.id, ...taskDoc.data()! };
                     }
@@ -279,18 +278,21 @@ export class TaskService {
     });
   }
 
-  changeTaskStatus(taskId: string, newStatus: string): Observable<void> {
-    return new Observable<void>((observer) => {
+  changeTaskStatus(taskId: string, newStatus: string): Observable<any> {
+    return new Observable<any>((observer) => {
       this.firestore
         .collection('tasks')
         .doc(taskId)
         .update({ status: newStatus })
         .then(() => {
-          observer.next();
+          
+          observer.next({message:"status updated succesfully"});
+
           observer.complete();
         })
         .catch((error) => {
           observer.error(error);
+          
         });
     });
   }

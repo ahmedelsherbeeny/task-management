@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import { from, Observable, switchMap } from 'rxjs';
+import { catchError, from, map, Observable, switchMap } from 'rxjs';
 import { User } from '../shared/models/user/user';
 
 @Injectable({
@@ -11,103 +11,70 @@ export class AdminService {
   constructor(private firestore: AngularFirestore) { }
 
 
+
+
   updateUserRole(userId: string, newRole: string): Observable<any> {
-    return new Observable<any>((observer) => {
-      let updateData: User = { role: newRole };
+    let updateData: Partial<User> = { role: newRole };
 
-      // Clear managedUsers array if changing role to 'user'
-      if (newRole === 'user') {
-        updateData.managedUsers = [];
-      } else if (newRole === 'manager') {
-        updateData.hasManager = false; // Clear hasManager flag
-      }
+    // Adjust updateData based on new role
+    if (newRole === 'user') {
+      updateData.managedUsers = [];
+    } else if (newRole === 'manager') {
+      updateData.hasManager = false;
+    }
 
-      this.firestore
-        .collection('users')
-        .doc(userId)
-        .update(updateData)
-        .then(() => {
-          if (newRole === 'manager') {
-            // Remove user from any managedUsers array
-            return this.firestore
-              .collection('users')
-              .ref.where('role', '==', 'manager')
-              .get()
-              .then((querySnapshot) => {
-                const batch = this.firestore.firestore.batch();
-
-                querySnapshot.forEach((doc: any) => {
-                  if (doc.exists) {
-                    const managedUsers = doc.data().managedUsers || [];
-                    const userIndex = managedUsers.indexOf(userId);
-                    if (userIndex > -1) {
-                      managedUsers.splice(userIndex, 1);
-                      batch.update(doc.ref, { managedUsers: managedUsers });
-                    }
-                  }
-                });
-
-                return batch.commit();
+    return from(this.firestore.collection('users').doc(userId).update(updateData)).pipe(
+      switchMap(() => {
+        if (newRole === 'manager') {
+          // Remove user from any manager's managedUsers array
+          return this.firestore.collection('users', ref => ref.where('role', '==', 'manager')).get().pipe(
+            switchMap(snapshot => {
+              const batch = this.firestore.firestore.batch();
+              snapshot.forEach((doc:any) => {
+                const managedUsers = doc.data().managedUsers || [];
+                const userIndex = managedUsers.indexOf(userId);
+                if (userIndex > -1) {
+                  managedUsers.splice(userIndex, 1);
+                  batch.update(doc.ref, { managedUsers });
+                }
               });
-          } else {
-            return Promise.resolve();
-          }
-        })
-        .then(() => {
-          observer.next({ message: 'Role updated successfully' });
-          observer.complete();
-        })
-        .catch((error) => {
-          observer.error(error);
-        });
-    });
+              return from(batch.commit());
+            }),
+            map(() => ({ message: 'Role updated successfully' })),
+            catchError(error => {
+              throw error;
+            })
+          );
+        } else {
+          return from(Promise.resolve({ message: 'Role updated successfully' }));
+        }
+      })
+    );
   }
-
     // Delete user
     deleteUser(userId: string): Observable<void> {
-      return new Observable<void>((observer) => {
-        this.firestore
-          .doc(`users/${userId}`)
-          .delete()
-          .then(() => {
-            // Fetch all users
-            this.firestore
-              .collection('users')
-              .get()
-              .pipe(
-                switchMap((snapshot) => {
-                  const batch = this.firestore.firestore.batch();
-  
-                  // Update each user's managedUsers array
-                  snapshot.docs.forEach((doc) => {
-                    const userData: User = doc.data()!;
-                    const managedUsers = userData.managedUsers || [];
-  
-                    // Remove userId from managedUsers if it exists
-                    const index = managedUsers.indexOf(userId);
-                    if (index !== -1) {
-                      managedUsers.splice(index, 1);
-                      batch.update(doc.ref, { managedUsers });
-                    }
-                  });
-  
-                  // Commit batch update
-                  return from(batch.commit());
-                })
-              )
-              .subscribe(
-                () => {
-                  observer.next();
-                  observer.complete();
-                },
-                (error) => {
-                  observer.error(error);
+      return from(this.firestore.doc(`users/${userId}`).delete()).pipe(
+        switchMap(() => 
+          this.firestore.collection('users').get().pipe(
+            switchMap(snapshot => {
+              const batch = this.firestore.firestore.batch();
+              snapshot.docs.forEach((doc:any) => {
+                const managedUsers = doc.data().managedUsers || [];
+                const index = managedUsers.indexOf(userId);
+                if (index !== -1) {
+                  managedUsers.splice(index, 1);
+                  batch.update(doc.ref, { managedUsers });
                 }
-              );
-          })
-          .catch((error) => {
-            observer.error(error);
-          });
-      });
+              });
+              return from(batch.commit());
+            })
+          )
+        ),
+        map(() => {}),
+        catchError(error => {
+          throw error;
+        })
+      );
     }
+  
 }

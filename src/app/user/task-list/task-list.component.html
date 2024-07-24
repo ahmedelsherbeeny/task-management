@@ -20,5 +20,5 @@
     <div *ngIf="tasks.length === 0" class="alert alert-info">
         No tasks found.
     </div>
-    <app-task-card *ngFor="let task of tasks" [task]="task"></app-task-card>
+    <app-task-card *ngFor="let task of tasks" [task]="task" (changeStatus)="changeTaskStatus($event)"></app-task-card>
 </div>

@@ -7,6 +7,7 @@ import { ManagerService } from '../manager.service';
 import { User } from 'src/app/shared/models/user/user';
 import { Task } from 'src/app/shared/models/tasks/tasks';
 import { MessageService } from 'src/app/shared/services/message.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-task-management',
@@ -19,7 +20,8 @@ export class TaskManagementComponent implements OnInit {
   users: User[] = [];
   onlyUsers: User[] = [];
   userRole!: string;
-  Loader: boolean = false;
+  Loader = false;
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private modalService: NgbModal,
@@ -28,41 +30,38 @@ export class TaskManagementComponent implements OnInit {
     private managerService: ManagerService,
     public message: MessageService
   ) {}
-  ngOnInit(): void {
-    this.userRole = JSON.parse(
-      JSON.stringify(localStorage.getItem('userRole'))
-    );
 
+  ngOnInit(): void {
+    this.userRole = JSON.parse(JSON.stringify(localStorage.getItem('userRole')));
     this.fetchTasks();
     this.fetchManagedUsers();
   }
 
   fetchTasks() {
     this.Loader = true;
-    this.taskService.getAllTasks().subscribe(
+    const taskSubscription = this.taskService.getAllTasks().subscribe(
       (tasks: Task[]) => {
         this.tasks = tasks;
         this.Loader = false;
       },
       (error) => {
         this.Loader = false;
-
         this.message.toast(error, 'error');
       }
     );
+    this.subscriptions.push(taskSubscription);
   }
 
   fetchManagedUsers() {
     if (this.userRole === 'admin') {
-      this.userService.getUsers().subscribe((users: User[]) => {
+      const userSubscription = this.userService.getUsers().subscribe((users: User[]) => {
         this.users = users.filter((user: User) => user.role == 'user');
       });
-
-      return;
+      this.subscriptions.push(userSubscription);
     } else {
       const managerId = localStorage.getItem('userUUID');
       if (managerId) {
-        this.managerService.fetchManagedUsers(managerId).subscribe({
+        const managerSubscription = this.managerService.fetchManagedUsers(managerId).subscribe({
           next: (users: User[]) => {
             this.users = users;
           },
@@ -70,11 +69,12 @@ export class TaskManagementComponent implements OnInit {
             console.error('Error fetching managed users:', error);
           },
         });
+        this.subscriptions.push(managerSubscription);
       }
     }
   }
 
-  openCreateTaskModa() {
+  openCreateTaskModal() {
     this.modalRef = this.modalService.open(TaskComponent, {
       backdrop: 'static',
       size: 'lg',
@@ -96,5 +96,34 @@ export class TaskManagementComponent implements OnInit {
       data: e.taskData,
       edit: true,
     };
+  }
+
+  changeTaskStatus(e:any){
+
+
+    const statusSubscription = this.taskService.changeTaskStatus(e.task.id!, e.newStatus).subscribe(res=>{
+      if(res.message){
+
+
+        this.message.toast(res.message, "success");
+
+        
+      }else{
+
+
+
+        this.message.toast("error changing status", "error");
+
+
+      }
+    });
+    this.subscriptions.push(statusSubscription);
+
+    
+
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe()); // Unsubscribe from all subscriptions
   }
 }

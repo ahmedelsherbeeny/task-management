@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
@@ -7,10 +8,13 @@ import { AuthService } from 'src/app/auth/auth.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   constructor(private authService: AuthService, private router: Router) {}
+ 
 
   userRole!: string;
+  private subscriptions: Subscription[] = [];
+
 
   ngOnInit(): void {
     // Get user UUID (UID) from localStorage
@@ -21,9 +25,11 @@ export class HeaderComponent implements OnInit {
   getUserRole(): void {
     const userId = localStorage.getItem('userUUID');
     if (userId) {
-      this.authService.getUserRole(userId).subscribe((role) => {
+      const headerSubscription=this.authService.getUserRole(userId).subscribe((role) => {
         this.userRole = role!;
       });
+      this.subscriptions.push(headerSubscription);
+
     }
   }
   onLogout() {
@@ -32,4 +38,10 @@ export class HeaderComponent implements OnInit {
 
     this.router.navigate(['/auth/login']);
   }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe()); // Unsubscribe from all subscriptions
+
+
+ }
 }

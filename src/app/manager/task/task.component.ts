@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -9,13 +9,14 @@ import { ManagerService } from '../manager.service';
 import { User } from 'src/app/shared/models/user/user';
 import { Task } from 'src/app/shared/models/tasks/tasks';
 import { MessageService } from 'src/app/shared/services/message.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-task',
   templateUrl: './task.component.html',
   styleUrls: ['./task.component.scss'],
 })
-export class TaskComponent {
+export class TaskComponent implements OnDestroy {
   taskForm!: FormGroup;
   taskId!: string | null;
   isEditMode: boolean = false;
@@ -23,6 +24,8 @@ export class TaskComponent {
   currentManager!: User;
   @Input() taskData!: any;
   Loader: boolean = false;
+  private subscriptions: Subscription[] = [];
+
 
 
   constructor(
@@ -37,10 +40,13 @@ export class TaskComponent {
   ) {
  
 
-    this.userService.getUsers().subscribe((users:User[]) => {
+    const userSubscription=this.userService.getUsers().subscribe((users:User[]) => {
       this.users = users.filter((user:User) => user.role === 'user');
     });
+    this.subscriptions.push(userSubscription);
+
   }
+ 
 
   ngOnInit(): void {
     this.fetchCurrentManager();
@@ -49,16 +55,18 @@ export class TaskComponent {
     this.taskId = this.taskData?.data.id;
     this.isEditMode = !!this.taskId;
     if (this.isEditMode) {
-      this.taskService.getTask(this.taskId!).subscribe((task) => {
+      const userSubscription=this.taskService.getTask(this.taskId!).subscribe((task) => {
         this.taskForm.patchValue(task);
       });
+      this.subscriptions.push(userSubscription);
     }
+
   }
 
   fetchCurrentManager(): void {
     const managerId = localStorage.getItem('userUUID');
     if (managerId) {
-      this.managerService.getCurrentManager(managerId).subscribe({
+      const userSubscription=this.managerService.getCurrentManager(managerId).subscribe({
         next: (manager: any) => {
           this.currentManager = manager;
           this.taskForm.controls['createdBy'].patchValue(
@@ -70,6 +78,8 @@ export class TaskComponent {
           this.message.toast(error, "error");
         },
       });
+      this.subscriptions.push(userSubscription);
+
     } else {
       this.message.toast('Manager ID not found in localStorage', "error");
 
@@ -96,30 +106,41 @@ export class TaskComponent {
       };
 
       if (this.isEditMode) {
-        this.taskService.updateTask(this.taskId!, task).subscribe(() => {
+        const userSubscription=this.taskService.updateTask(this.taskId!, task).subscribe(() => {
           this.Loader = false
 
           this.modal.close();
           this.message.toast("Updated Successfully", "success");
 
           this.router.navigate(['/manager/task-management']);
+          this.subscriptions.push(userSubscription);
+
         },(error)=>{
+          this.Loader = false
+
           this.message.toast(error, "error");
 
         });
       } else {
-        this.taskService.createTask(task).subscribe(() => {
+        const userSubscription=this.taskService.createTask(task).subscribe(() => {
           this.Loader = false;
 
           this.modal.close();
           this.message.toast("Created Successfully", "success");
 
           this.router.navigate(['/manager/task-management']);
+          this.subscriptions.push(userSubscription);
+
         },(error)=>{
+          this.Loader = false;
+
           this.message.toast(error, "error");
 
         });
       }
     }
+  }
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(sub => sub.unsubscribe()); // Unsubscribe from all subscriptions
   }
 }

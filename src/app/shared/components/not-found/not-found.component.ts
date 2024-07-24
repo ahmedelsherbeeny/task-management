@@ -10,6 +10,6 @@ export class NotFoundComponent {
   constructor(private location: Location) {}
 
   goBack(): void {
-    console.log(this.location.back());
+    this.location.back()
   }
 }

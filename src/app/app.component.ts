@@ -1,10 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  AngularFirestore,
-  DocumentReference,
-  QuerySnapshot,
-} from '@angular/fire/compat/firestore';
-import { AuthService } from './auth/auth.service';
+
 
 @Component({
   selector: 'app-root',

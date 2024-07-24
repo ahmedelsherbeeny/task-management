@@ -26,7 +26,6 @@ export class AdminGuard implements CanActivate {
     }
 
     if (userRole === 'admin') {
-      console.log(userRole);
 
       return of(true);
     } else {
